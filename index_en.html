@@ -1,0 +1,180 @@
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="./style.css" />
+	<link rel="stylesheet" href="./leaflet/leaflet.css" />
+	<script src="./leaflet/leaflet.js"></script>
+	<script src="./leaflet/plugins/Leaflet.Control.Custom.js"></script>
+	<script src="./utils.js"></script>
+	<script src="./underscore-min.js"></script>
+	<script src="./menu.js"></script>
+	<script src="./map.js"></script>
+	<script src="./search.js"></script>
+	<script src="./data/data_en.js"></script>
+</head>
+
+<body>
+
+	<!-- Navigation -->
+	<nav>
+		<ul class="topnav">
+			<li id="menu-icon" onclick="onMenuButtonClick(this)">
+				<div class="topnav-menu">
+					<div class="topnav-menu-bar1"></div>
+					<div class="topnav-menu-bar2"></div>
+					<div class="topnav-menu-bar3"></div>
+				</div>
+			</li>
+			<li><a id="tabWorldmap" class="active" href="index_en.html">Weltkarte</a></li>
+			<li><a id="tabAlShedim" href="alshedim_en.html">Al Shedim</a></li>
+			<div class="right">
+				<li><img id="language-flag-de" class="topnav-flag" alt="de" src="./resources/flags/de.svg"
+						onclick='onLanguageClick(this, "de")'></li>
+				<li><img id="language-flag-en" class="topnav-flag" alt="en" src="./resources/flags/gb.svg"
+						onclick='onLanguageClick(this, "en")'></li>
+				<li><img id="language-flag-en" class="topnav-flag" alt="pl" src="./resources/flags/pl.svg"
+						onclick='onLanguageClick(this, "pl")'></li>
+				<li><img id="language-flag-ru" class="topnav-flag-last" alt="ru" src="./resources/flags/ru.svg"
+						onclick='onLanguageClick(this, "ru")'></li>
+			</div>
+		</ul>
+	</nav>
+
+	<!-- Map -->
+	<main class="map-container">
+		<div id="map"></div>
+	</main>
+
+	<!-- Menu -->
+	<aside id="sidebar" class="left-sidebar">
+		<!-- Spacer -->
+		<div class="sidebar-spacer"></div>
+		<!-- Search -->
+		<p id="header-search" class="sidebar-header"></p>
+		<div id="search"></div>
+		<!-- Filter -->
+		<p id="header-menu" class="sidebar-header"></p>
+		<div id="menu"></div>
+	</aside>
+
+	<script>
+
+		// language handling
+		document.getElementById("language-flag-en").classList.toggle("active");
+
+		// text localizations
+		document.title = localization.websiteTitle;
+		document.getElementById("header-search").innerHTML = localization.sidebarSearch;
+		document.getElementById("header-menu").innerHTML = localization.sidebarMenu;
+		document.getElementById("tabWorldmap").innerHTML = localization.tabWorldmap;
+		document.getElementById("tabAlShedim").innerHTML = localization.tabAlShedim;
+		//document.getElementById("tabImprint").innerHTML = localization.tabImprint;
+
+		const isMobileScreen = window.matchMedia('(max-width: 600px)') == true;
+
+		var myMenu, myMap, mySearch,
+			isMenuEnabled = true,
+			searchLayer = null,
+			debug = "",
+			debugLine = null;
+
+		myMenu = initMenu("menu", "world");
+
+		myMap = initMap(
+			"map",
+			[[-214000, -242500], [199000, 157000]],
+			[0, 0],
+			-9,
+			-9.5,
+			"world",
+			myMenu.filters);
+
+		mySearch = initSearch("search", myMap.names);
+
+		if (isMobileScreen) {
+			document.getElementById("mousePositionLabel").parentNode.style.visibility = "hidden";
+		} else {
+			document.getElementById("map").style.marginLeft = "330px";
+		}
+
+		document.getElementById("menu-icon").classList.toggle("change");
+
+		function onLanguageClick(id, code) {
+			if (code == "de") {
+				document.location.href = "index.html";
+			} else if (code == "ru") {
+				document.location.href = "index_ru.html";
+			} else if (code == "pl") {
+				document.location.href = "index_pl.html";
+			} else {
+				document.location.href = "index_en.html";
+			}
+		}
+
+		function onFilterToggleStateChange(id, checked) {
+			var layer = myMap.layers[id];
+			if (checked) {
+				myMap.map.addLayer(layer);
+			} else {
+				myMap.map.removeLayer(layer);
+			}
+		}
+
+		function onMenuButtonClick(cls) {
+			cls.classList.toggle("change");
+
+			isMenuEnabled = !isMenuEnabled;
+			if (isMenuEnabled) {
+				document.getElementById("sidebar").style.marginLeft = "0%";
+				if (isMobileScreen) {
+					document.getElementById("mousePositionLabel").parentNode.style.visibility = "hidden";
+				} else {
+					document.getElementById("map").style.marginLeft = "330px";
+				}
+			}
+			else {
+				document.getElementById("sidebar").style.marginLeft = "-100%";
+				if (isMobileScreen) {
+					document.getElementById("mousePositionLabel").parentNode.style.visibility = "visible";
+				} else {
+					document.getElementById("map").style.marginLeft = "0px";
+				}
+			}
+		}
+
+		function onSearch(name) {
+			if (isMobileScreen) {
+				document.getElementById("menu-icon").click();
+			}
+
+			var marker = _.findWhere(myMap.markers, { name: name });
+
+			if (!marker) { return; }
+
+			if (!myMap.map.hasLayer(myMap.layers[marker.layer])) {
+				if (searchLayer !== null && myMap.map.hasLayer(searchLayer)) {
+					myMap.map.removeLayer(searchLayer);
+				}
+				searchLayer = L.layerGroup([marker.marker]);
+				myMap.map.addLayer(searchLayer);
+			}
+			myMap.map.flyTo(marker.marker.getLatLng());
+			marker.marker.openPopup();
+		}
+
+		function onDebugClick() {
+			//setClipboardText(debug);
+			//alert(debug);
+			if (debugLine) {
+				debugLine.remove();
+				debugLine = null;
+			}
+		}
+
+	</script>
+
+</body>
+
+</html>
