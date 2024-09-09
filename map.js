@@ -1,3 +1,6 @@
+const MARKER_OPACITY_DISCOVERED = 0.5;
+const MARKER_OPACITY_UNDISCOVERED = 1.0;
+
 function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filters) {
 
     var mapColor = L.imageOverlay('resources/map_' + mapName + '_color.jpg', bounds),
@@ -105,30 +108,6 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
     map.fitBounds(bounds);
     // map.setView(startOffset, startZoom);
 
-    function createPopup(feature, layer) {
-        if (feature.properties.label == true) {
-            return;
-        }
-        var popup = L.popup({
-            minWidth: feature.properties.screen ? 512 : 50,
-            maxWidth: 512,
-            maxHeight: 1024
-        });
-        var out = [];
-        if (feature.properties.screen) {
-            out.push('<img src="./resources/screens/' + feature.properties.screen + '"/>' + "<br />");
-        }
-        out.push('<b>' + feature.properties.name + (feature.properties.index > -1 && feature.properties.type !== "npc" ? " #" + (feature.properties.index + 1) : "") + '</b>');
-        if (feature.properties.count > 1) {
-            out.push('<center>' + 'x' + feature.properties.count + '</center>');
-        }
-
-        if (feature.properties.description) {
-            out.push("<br />" + feature.properties.description);
-        }
-        layer.bindPopup(popup.setContent(out.join("<br />")));
-    }
-
     var markers = [], layers = {}, names = [];
 
     var keys = _.keys(_.countBy(jsonData,
@@ -146,11 +125,14 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
                         new FeatureLabel(feature.properties.name) :
                         new FeatureIcon({ iconUrl: 'resources/icons/ic_marker_' + typeId + '.png' })
                 });
+                marker.setOpacity(isDiscovered(feature) ? MARKER_OPACITY_DISCOVERED : MARKER_OPACITY_UNDISCOVERED);
                 markers.push(
                     {
+                        "id": featureUID(feature),
                         "marker": marker,
                         "layer": typeId,
-                        "name": name
+                        "name": name,
+                        "feature": feature
                     });
                 names.push(name);
                 return marker;
@@ -167,6 +149,19 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
             map.addLayer(layers[element]);
         }
     });
+
+    function createPopup(feature, layer) {
+        if (feature.properties.label == true) {
+            return;
+        }
+        var popup = L.popup({
+            minWidth: feature.properties.screen ? 512 : 50,
+            maxWidth: 512,
+            maxHeight: 1024
+        });
+
+        layer.bindPopup(popup.setContent(createPopupContent(feature)));
+    }
 
     function withinBounds(rect, point) {
         return point[0] >= rect[0][1] && point[0] <= rect[1][1] && point[1] >= rect[0][0] && point[1] <= rect[1][0];

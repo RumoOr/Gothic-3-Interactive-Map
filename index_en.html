@@ -77,8 +77,13 @@
 		var myMenu, myMap, mySearch,
 			isMenuEnabled = true,
 			searchLayer = null,
+			discoveries = [],
 			debug = "",
 			debugLine = null;
+
+		initDiscoveries();
+
+		loadFromLocalStorage();
 
 		myMenu = initMenu("menu", "world");
 

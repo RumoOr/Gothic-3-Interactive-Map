@@ -1,20 +1,22 @@
+const DISCOVERIES_STORAGE_KEY = 'discoveries'
+
 function addScript(filename, onScriptLoaded) {
- 	var head = document.getElementsByTagName('head')[0];
+    var head = document.getElementsByTagName('head')[0];
 
- 	var script = document.createElement('script');
- 	script.src = filename;
- 	script.type = 'text/javascript';
- 	script.onload = onScriptLoaded;
- 	script.async = true;
+    var script = document.createElement('script');
+    script.src = filename;
+    script.type = 'text/javascript';
+    script.onload = onScriptLoaded;
+    script.async = true;
 
- 	head.append(script);
+    head.append(script);
 }
 
-function setClipboardText(text){
+function setClipboardText(text) {
     var id = "mycustom-clipboard-textarea-hidden-id";
     var existsTextarea = document.getElementById(id);
 
-    if(!existsTextarea){
+    if (!existsTextarea) {
         console.log("Creating textarea");
         var textarea = document.createElement("textarea");
         textarea.id = id;
@@ -41,7 +43,7 @@ function setClipboardText(text){
         document.querySelector("body").appendChild(textarea);
         console.log("The textarea now exists :)");
         existsTextarea = document.getElementById(id);
-    }else{
+    } else {
         console.log("The textarea already exists :3")
     }
 
@@ -50,12 +52,91 @@ function setClipboardText(text){
 
     try {
         var status = document.execCommand('copy');
-        if(!status){
+        if (!status) {
             console.error("Cannot copy text");
-        }else{
+        } else {
             console.log("The text is now on the clipboard");
         }
     } catch (err) {
         console.log('Unable to copy.');
+    }
+}
+
+function createPopupContent(feature) {
+    var out = [],
+        id = featureUID(feature);
+
+    var cbDiscovered = `
+        <label>
+            <input type="checkbox" ${isDiscovered(feature) ? 'checked' : ''} onchange="onToggleDiscoveryItem('${id}')">
+        </label>
+    `;
+
+    if (feature.properties.screen) {
+        out.push('<img src="./resources/screens/' + feature.properties.screen + '"/>' + "<br />");
+    }
+    out.push('<b>' + feature.properties.name + (feature.properties.index > -1 && feature.properties.type !== "npc" ? " #" + (feature.properties.index + 1) : "") + cbDiscovered + '</b>');
+
+    if (feature.properties.count > 1) {
+        out.push('<center>' + 'x' + feature.properties.count + '</center>');
+    }
+    if (feature.properties.description) {
+        out.push("<br />" + feature.properties.description);
+    }
+    return out.join("<br />")
+}
+
+function featureUID(feature) {
+    return feature.geometry.coordinates[0] + "_" + feature.geometry.coordinates[1]
+}
+
+function initDiscoveries() {
+    for (i = 0; i < jsonData.length; i += 1) {
+        discoveries.push(
+            {
+                "id": featureUID(jsonData[i]),
+                "value": false
+            }
+        );
+    }
+}
+
+function isDiscovered(feature) {
+    var id = featureUID(feature),
+        discoveryItem = discoveries.find(item => item.id === id);
+
+    return discoveryItem ? discoveryItem.value : false;
+}
+
+function updateMarker(markerItem) {
+    var marker = markerItem.marker
+    if (marker.getPopup()) {
+        marker.setPopupContent(createPopupContent(markerItem.feature));
+        marker.setOpacity(isDiscovered(markerItem.feature) ? MARKER_OPACITY_DISCOVERED : MARKER_OPACITY_UNDISCOVERED);
+    }
+}
+
+function saveToLocalStorage() {
+    localStorage.setItem(DISCOVERIES_STORAGE_KEY, JSON.stringify(discoveries));
+}
+
+function loadFromLocalStorage() {
+    var json = localStorage.getItem(DISCOVERIES_STORAGE_KEY);
+    if (json) {
+        discoveries = JSON.parse(json);
+    }
+}
+
+function onToggleDiscoveryItem(id) {
+    var discoveryItem = discoveries.find(item => item.id === id);
+    if (discoveryItem) {
+        discoveryItem.value = !discoveryItem.value;
+
+        saveToLocalStorage();
+
+        var markerItem = myMap.markers.find(item => item.id === id)
+        if (markerItem) {
+            updateMarker(markerItem)
+        }
     }
 }
