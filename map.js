@@ -1,3 +1,5 @@
+const VERION_NAME = '1.0.0'
+
 const MARKER_OPACITY_DISCOVERED = 0.5;
 const MARKER_OPACITY_UNDISCOVERED = 1.0;
 
@@ -98,9 +100,9 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
         debug =  "" + coords[1] + "," + coords[0];
         
         if (debugLine == null) {
-        	debugLine = L.polygon([e.latlng]).addTo(map);
+            debugLine = L.polygon([e.latlng]).addTo(map);
         } else {
-        	debugLine.addLatLng(e.latlng);
+            debugLine.addLatLng(e.latlng);
         }
         */
     });
@@ -150,22 +152,7 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
         }
     });
 
-    function createPopup(feature, layer) {
-        if (feature.properties.label == true) {
-            return;
-        }
-        var popup = L.popup({
-            minWidth: feature.properties.screen ? 512 : 50,
-            maxWidth: 512,
-            maxHeight: 1024
-        });
-
-        layer.bindPopup(popup.setContent(createPopupContent(feature)));
-    }
-
-    function withinBounds(rect, point) {
-        return point[0] >= rect[0][1] && point[0] <= rect[1][1] && point[1] >= rect[0][0] && point[1] <= rect[1][0];
-    }
+    createVersionInfo(map);
 
     return {
         "map": map,
@@ -173,4 +160,31 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
         "layers": layers,
         "names": names
     };
+}
+
+function createPopup(feature, layer) {
+    if (feature.properties.label == true) {
+        return;
+    }
+    var popup = L.popup({
+        minWidth: feature.properties.screen ? 512 : 50,
+        maxWidth: 512,
+        maxHeight: 1024
+    });
+
+    layer.bindPopup(popup.setContent(createPopupContent(feature)));
+}
+
+function createVersionInfo(map) {
+    var versionInfo = L.control({ position: 'bottomright' });
+    versionInfo.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'version-info');
+        this._div.innerHTML = `v${VERION_NAME}`;
+        return this._div;
+    };
+    versionInfo.addTo(map);
+}
+
+function withinBounds(rect, point) {
+    return point[0] >= rect[0][1] && point[0] <= rect[1][1] && point[1] >= rect[0][0] && point[1] <= rect[1][0];
 }

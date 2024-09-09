@@ -388,3 +388,12 @@ input:checked+.filter-slider .filter-icon-dark {
     transform: translate(-50%, -25%);
     text-shadow: -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000, 1px 1px 1px #000;
 }
+
+.version-info {
+    position: absolute;
+    bottom: 0;
+    right: 0; 
+    padding: 0 0;
+    font-size: 11px;
+    color: #999;
+}
