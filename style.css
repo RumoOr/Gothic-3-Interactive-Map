@@ -1,6 +1,86 @@
 /* Eric Meyer's CSS Reset */
 
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
     margin: 0;
     padding: 0;
     border: 0;
@@ -27,7 +107,17 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 
 /* HTML5 display-role reset for older browsers */
 
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
     display: block;
 }
 
@@ -35,15 +125,20 @@ body {
     line-height: 1;
 }
 
-ol, ul {
+ol,
+ul {
     list-style: none;
 }
 
-blockquote, q {
+blockquote,
+q {
     quotes: none;
 }
 
-blockquote:before, blockquote:after, q:before, q:after {
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
     content: '';
     content: none;
 }
@@ -55,7 +150,8 @@ table {
 
 /* End of Eric Meyer's CSS Reset */
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     background-color: #333;
@@ -87,7 +183,6 @@ ul.topnav li {
     height: 50px;
     text-align: center;
     vertical-align: middle;
-    /* background: #ff00ff; */
 }
 
 ul.topnav li a {
@@ -115,15 +210,10 @@ ul.topnav li a.active {
 
 ul.topnav div.right {
     float: right;
-}
-
-@media screen and (max-width: 600px) {
-    ul.topnav li {
-        overflow-x: auto;
-    }
-    ul.topnav div.right {
-        /* float: left; */
-    }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin: 5px;
 }
 
 .topnav-menu {
@@ -135,7 +225,9 @@ ul.topnav div.right {
     padding: 0px 17px;
 }
 
-.topnav-menu-bar1, .topnav-menu-bar2, .topnav-menu-bar3 {
+.topnav-menu-bar1,
+.topnav-menu-bar2,
+.topnav-menu-bar3 {
     width: 20px;
     height: 2px;
     background-color: #eee;
@@ -143,23 +235,20 @@ ul.topnav div.right {
     transition: 0.4s;
 }
 
-.topnav-flag, .topnav-flag-last {
+.topnav-flag,
+.topnav-flag-last {
     display: table-cell;
     cursor: pointer;
     width: auto;
-    height: 20px;
+    height: 17px;
     vertical-align: middle;
-    margin: 15px 3px; 
-    /* border: 1px outset #aaa; */
     box-shadow: 1px 1px 1px #000000aa;
 }
 
-.topnav-flag-last {
-    margin: 15px 10px 15px 3px;
-}
-
-.topnav-flag.active, .topnav-flag-last.active {
-    /* border: 1px outset #eee; */
+@media screen and (max-width: 600px) {
+    ul.topnav li {
+        overflow-x: auto;
+    }
 }
 
 /* Rotate first bar */
@@ -392,7 +481,7 @@ input:checked+.filter-slider .filter-icon-dark {
 .version-info {
     position: absolute;
     bottom: 0;
-    right: 0; 
+    right: 0;
     padding: 0 0;
     font-size: 11px;
     color: #999;
