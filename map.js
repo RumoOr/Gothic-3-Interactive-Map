@@ -1,8 +1,3 @@
-const VERION_NAME = '1.0.0'
-
-const MARKER_OPACITY_DISCOVERED = 0.5;
-const MARKER_OPACITY_UNDISCOVERED = 1.0;
-
 function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filters) {
 
     var mapColor = L.imageOverlay('resources/map_' + mapName + '_color.jpg', bounds),
@@ -96,15 +91,6 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
         var coords = [parseInt(e.latlng.lat), parseInt(e.latlng.lng)];
         document.getElementById('mousePositionLabel').innerHTML =
             "" + coords[1] + " " + coords[0];
-        /*   
-        debug =  "" + coords[1] + "," + coords[0];
-        
-        if (debugLine == null) {
-            debugLine = L.polygon([e.latlng]).addTo(map);
-        } else {
-            debugLine.addLatLng(e.latlng);
-        }
-        */
     });
 
     map.fitBounds(bounds);

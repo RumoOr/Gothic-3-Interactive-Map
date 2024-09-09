@@ -200,6 +200,7 @@ ul.topnav li a:hover:not(.active) {
     color: #eee;
     background-color: #111;
     border-bottom: 3px solid #111;
+    transition: 0.25s;
 }
 
 ul.topnav li a.active {
@@ -278,7 +279,7 @@ ul.topnav div.right {
     float: left;
     position: absolute;
     height: 100%;
-    width: 370px;
+    width: 350px;
     box-shadow: 0px 0px 5px #aaa;
     overflow: auto;
     z-index: 1;
@@ -436,10 +437,29 @@ input:checked+.filter-slider .filter-icon-dark {
     transform: translate(0%, -50%);
     top: 50%;
     left: 50;
-    width: 100%;
+    width: 60%;
     padding: 0 0 0 10px;
     color: #555;
     font-size: 12px;
+}
+
+.settings-entry {
+    display: grid;
+    width: auto;
+    padding: 7px;
+}
+
+.settings-entry button {
+    border: 1px solid #ddd;
+    color: #444;
+    background-color: #fff;
+    padding: 10px;
+}
+
+.settings-entry button:hover {
+    background-color:#00000080;
+    color: #fff;
+    transition: 0.25s;
 }
 
 /* Map

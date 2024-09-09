@@ -2,13 +2,15 @@ var localization = {
     "websiteTitle": "Interaktywna mapa Gothic 3",
     "sidebarSearch": "Szukaj",
     "sidebarMenu": "Znaczniki",
+    "sidebarSettings": "Ustawienia",
     "tabWorldmap": "Mapa świata",
     "tabAlShedim": "Al Shedim",
     "tabImprint": "Impressum",
     "mapLayerColor": "Kolor",
     "mapLayerSepia": "Sepia",
     "mapLayerGrayscale": "Szarość",
-    "searchHint": "Nazwa / Miejsce / Potwór ..."
+    "searchHint": "Nazwa / Miejsce / Potwór ...",
+    "settingsResetMap": "Zresetuj mapa"
 }
 
 var jsonMenu = [
