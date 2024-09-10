@@ -1,6 +1,7 @@
 const VERION_NAME = '1.0.0'
 
 const LAYER_INDEX_STORAGE_KEY = 'layer_index'
+const FILTERS_STORAGE_KEY = 'filters'
 const DISCOVERIES_STORAGE_KEY = 'discoveries'
 
 const MARKER_OPACITY_DISCOVERED = 0.4;
@@ -12,6 +13,7 @@ var myMenu, myMap, mySearch, mySettings,
     isMenuEnabled = true,
     searchLayer = null,
     layerIndex = 0,
+    filters = [],
     discoveries = [],
     debug = "",
     debugLine = null;
@@ -108,13 +110,19 @@ function initScript(pageIndex) {
     document.getElementById("tabWorldmap").innerHTML = localization.tabWorldmap;
     document.getElementById("tabAlShedim").innerHTML = localization.tabAlShedim;
 
+    initFilters();
+
     initDiscoveries();
 
     loadFromLocalStorage();
 
     let page = pageIndex == 0 ? "world" : "alshedim"
 
-    myMenu = initMenu("menu", page);
+    myMenu = initMenu(
+        "menu",
+        page,
+        filters
+    );
 
     myMap = initMap(
         "map",
@@ -127,7 +135,10 @@ function initScript(pageIndex) {
         layerIndex
     );
 
-    mySearch = initSearch("search", myMap.names);
+    mySearch = initSearch(
+        "search",
+        myMap.names
+    );
 
     mySettings = initSettings("settings");
 
@@ -154,8 +165,23 @@ function onLayerIndexChange(index) {
     saveLayerIndexToLocalStorage();
 }
 
-function onFilterToggleStateChange(id, checked) {
-    var layer = myMap.layers[id];
+function onFilterGroupCheckedChange(filterGroup, checked) {
+    var goupId = filterGroup.icon;
+
+    setFilterGroupChecked(goupId, checked);
+
+    saveFiltersToLocalStorage();
+}
+
+function onFilterItemCheckedChange(item, filterGroup, checked) {
+    var goupId = filterGroup.icon,
+        itemId = item.id,
+        layer = myMap.layers[itemId];
+
+    setFilterItemChecked(goupId, itemId, checked);
+
+    saveFiltersToLocalStorage();
+
     if (checked) {
         myMap.map.addLayer(layer);
     } else {
@@ -233,6 +259,32 @@ function featureUID(feature) {
     return feature.geometry.coordinates[0] + "_" + feature.geometry.coordinates[1]
 }
 
+function initFilters() {
+    var menuGroup,
+        filterGroup;
+
+    for (i = 0; i < jsonMenu.length; i += 1) {
+        menuGroup = jsonMenu[i].items;
+        filterGroup = [];
+
+        for (j = 0; j < menuGroup.length; j += 1) {
+            filterGroup.push(
+                {
+                    "id": menuGroup[j].id,
+                    "value": menuGroup[j].checked
+                }
+            );
+        }
+        filters.push(
+            {
+                "id": jsonMenu[i].icon,
+                "value": i == 0,
+                "items": filterGroup
+            }
+        );
+    }
+}
+
 function initDiscoveries() {
     for (i = 0; i < jsonData.length; i += 1) {
         discoveries.push(
@@ -249,6 +301,44 @@ function isDiscovered(feature) {
         discoveryItem = discoveries.find(item => item.id === id);
 
     return discoveryItem ? discoveryItem.value : false;
+}
+
+function isFilterGroupChecked(groupId) {
+    var filterGroup = filters.find(item => item.id === groupId);
+
+    return filterGroup ? filterGroup.value : false;
+}
+
+function isFilterItemChecked(groupId, itemId) {
+    var filterItem,
+        filterGroup = filters.find(item => item.id === groupId);
+
+    if (filterGroup) {
+        filterItem = filterGroup.items.find(item => item.id === itemId);
+    }
+
+    return filterItem ? filterItem.value : false;
+}
+
+function setFilterGroupChecked(groupId, checked) {
+    var filterGroup = filters.find(item => item.id === groupId);
+
+    if (filterGroup) {
+        filterGroup.value = checked;
+    }
+}
+
+function setFilterItemChecked(groupId, itemId, checked) {
+    var filterItem,
+        filterGroup = filters.find(item => item.id === groupId);
+
+    if (filterGroup) {
+        filterItem = filterGroup.items.find(item => item.id === itemId);
+
+        if (filterItem) {
+            filterItem.value = checked;
+        }
+    }
 }
 
 function updateMarker(markerItem, closePopup = true) {
@@ -284,16 +374,24 @@ function saveLayerIndexToLocalStorage() {
     localStorage.setItem(LAYER_INDEX_STORAGE_KEY, layerIndex.toString());
 }
 
+function saveFiltersToLocalStorage() {
+    localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(filters));
+}
+
 function saveDiscoveriesToLocalStorage() {
     localStorage.setItem(DISCOVERIES_STORAGE_KEY, JSON.stringify(discoveries));
 }
 
 function loadFromLocalStorage() {
     var jsonLayerIndex = localStorage.getItem(LAYER_INDEX_STORAGE_KEY),
+        jsonFilters = localStorage.getItem(FILTERS_STORAGE_KEY),
         jsonDiscoveries = localStorage.getItem(DISCOVERIES_STORAGE_KEY);
 
     if (jsonLayerIndex) {
         layerIndex = parseInt(jsonLayerIndex)
+    }
+    if (jsonFilters) {
+        filters = JSON.parse(jsonFilters);
     }
     if (jsonDiscoveries) {
         discoveries = JSON.parse(jsonDiscoveries);

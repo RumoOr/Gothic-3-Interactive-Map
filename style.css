@@ -397,6 +397,10 @@ ul.topnav div.right {
     height: 50px;
 }
 
+.filter-checkbox {
+    display: none;
+}
+
 .filter-slider {
     position: absolute;
     cursor: pointer;
@@ -405,23 +409,26 @@ ul.topnav div.right {
     right: 0;
     bottom: 0;
     overflow: hidden;
+    padding: 2px;
 }
 
 .filter-icon-light {
     display: none;
     float: left;
     width: auto;
-    height: 38px;
+    height: 34px;
     padding: 6px;
     background-color: #4CAF50;
+    border-radius: 4px;
 }
 
 .filter-icon-dark {
     float: left;
     width: auto;
-    height: 38px;
+    height: 34px;
     padding: 6px;
     background-color: #fff;
+    border-radius: 4px;
 }
 
 input:checked+.filter-slider .filter-icon-light {
