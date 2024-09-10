@@ -280,6 +280,7 @@ ul.topnav div.right {
     position: absolute;
     height: 100%;
     width: 350px;
+    left: 0px;
     box-shadow: 0px 0px 5px #aaa;
     overflow: auto;
     z-index: 1;
@@ -307,7 +308,6 @@ ul.topnav div.right {
     border: 1px solid #ddd;
     background-color: #fff;
     padding: 10px;
-    /* font-size: 16px; */
 }
 
 .autocomplete input[type=search] {
@@ -457,7 +457,7 @@ input:checked+.filter-slider .filter-icon-dark {
 }
 
 .settings-entry button:hover {
-    background-color:#00000080;
+    background-color: #00000080;
     color: #fff;
     transition: 0.25s;
 }
@@ -466,21 +466,14 @@ input:checked+.filter-slider .filter-icon-dark {
 -----------------------------------------------------------------------------*/
 
 #map {
-    display: block;
     position: absolute;
     height: auto;
-    bottom: 0;
-    top: 0;
+    top: 50px;
     left: 0;
     right: 0;
-    margin-top: 50px;
-    margin-left: 370px;
+    bottom: 0;
     z-index: 0;
     transition: 0.4s;
-}
-
-.feature-label {
-    /* ... */
 }
 
 .feature-label span {
@@ -496,6 +489,38 @@ input:checked+.filter-slider .filter-icon-dark {
     height: auto;
     transform: translate(-50%, -25%);
     text-shadow: -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000, 1px 1px 1px #000;
+}
+
+.popup-screenshot {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.popup-header {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-title {
+    line-height: 1;
+    text-align: center;
+}
+
+.popup-checkbox {
+    position: relative;
+    top: -1px;
+    margin-left: 10px;
+}
+
+.popup-description {
+    color: #444;
+    background-color: #eee;
+    padding: 5px 5px 3px 5px;
 }
 
 .version-info {

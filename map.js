@@ -33,6 +33,7 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
     };
 
     var map = L.map(id, {
+        zoomControl: false,
         crs: L.CRS.Simple,
         maxZoom: -4.5,
         minZoom: minimumZoom,
@@ -42,7 +43,13 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
 
     mapColor.addTo(map);
 
-    L.control.layers(baseMaps).addTo(map);
+    L.control.layers(
+        baseMaps
+    ).addTo(map);
+
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(map);
 
     L.control.custom({
         content: '<div id="mousePositionLabel">' +
@@ -152,11 +159,14 @@ function createPopup(feature, layer) {
     if (feature.properties.label == true) {
         return;
     }
-    var popup = L.popup({
-        minWidth: feature.properties.screen ? 512 : 50,
-        maxWidth: 512,
-        maxHeight: 1024
-    });
+
+    var maxSize = 512,
+        maxWidthScreen = Math.min(window.innerWidth - 50, maxSize),
+        popup = L.popup({
+            minWidth: feature.properties.screen ? maxWidthScreen : 50,
+            maxWidth: maxWidthScreen,
+            maxHeight: maxSize
+        });
 
     layer.bindPopup(popup.setContent(createPopupContent(feature)));
 }

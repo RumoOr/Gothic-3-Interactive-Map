@@ -5,7 +5,7 @@ const DISCOVERIES_STORAGE_KEY = 'discoveries'
 const MARKER_OPACITY_DISCOVERED = 0.4;
 const MARKER_OPACITY_UNDISCOVERED = 1.0;
 
-var isMobileScreen = window.matchMedia('(max-width: 600px)') == true;
+const isMobileScreen = window.innerWidth <= 600;
 
 var myMenu, myMap, mySearch, mySettings,
     isMenuEnabled = true,
@@ -121,17 +121,14 @@ function initScript(pageIndex) {
         -9,
         -9.5,
         page,
-        myMenu.filters);
+        myMenu.filters
+    );
 
     mySearch = initSearch("search", myMap.names);
 
     mySettings = initSettings("settings");
 
-    if (isMobileScreen) {
-        document.getElementById("mousePositionLabel").parentNode.style.visibility = "hidden";
-    } else {
-        document.getElementById("map").style.marginLeft = "330px";
-    }
+    document.getElementById("mousePositionLabel").parentNode.style.visibility = isMobileScreen ? "hidden" : "visible";
 
     document.getElementById("menu-icon").classList.toggle("change");
 }
@@ -161,22 +158,8 @@ function onMenuButtonClick(cls) {
     cls.classList.toggle("change");
 
     isMenuEnabled = !isMenuEnabled;
-    if (isMenuEnabled) {
-        document.getElementById("sidebar").style.marginLeft = "0%";
-        if (isMobileScreen) {
-            document.getElementById("mousePositionLabel").parentNode.style.visibility = "hidden";
-        } else {
-            document.getElementById("map").style.marginLeft = "330px";
-        }
-    }
-    else {
-        document.getElementById("sidebar").style.marginLeft = "-100%";
-        if (isMobileScreen) {
-            document.getElementById("mousePositionLabel").parentNode.style.visibility = "visible";
-        } else {
-            document.getElementById("map").style.marginLeft = "0px";
-        }
-    }
+
+    document.getElementById("sidebar").style.left = isMenuEnabled ? "0px" : "-350px";
 }
 
 function onSearch(name) {
@@ -184,19 +167,9 @@ function onSearch(name) {
         document.getElementById("menu-icon").click();
     }
 
-    var marker = _.findWhere(myMap.markers, { name: name });
-
-    if (!marker) { return; }
-
-    if (!myMap.map.hasLayer(myMap.layers[marker.layer])) {
-        if (searchLayer !== null && myMap.map.hasLayer(searchLayer)) {
-            myMap.map.removeLayer(searchLayer);
-        }
-        searchLayer = L.layerGroup([marker.marker]);
-        myMap.map.addLayer(searchLayer);
-    }
-    myMap.map.flyTo(marker.marker.getLatLng());
-    marker.marker.openPopup();
+    setTimeout(function () {
+        gotoMarker(name);
+    }, isMobileScreen ? 400 : 100);
 }
 
 function onToggleDiscoveryItem(id) {
@@ -229,24 +202,22 @@ function createPopupContent(feature) {
     var out = [],
         id = featureUID(feature);
 
-    var cbDiscovered = `
-        <label>
-            <input type="checkbox" ${isDiscovered(feature) ? 'checked' : ''} onchange="onToggleDiscoveryItem('${id}')">
-        </label>
-    `;
-
     if (feature.properties.screen) {
-        out.push('<img src="./resources/screens/' + feature.properties.screen + '"/>' + "<br />");
+        out.push('<img class="popup-screenshot" src="./resources/screens/' + feature.properties.screen + '"/>');
     }
-    out.push('<b>' + feature.properties.name + (feature.properties.index > -1 && feature.properties.type !== "npc" ? " #" + (feature.properties.index + 1) : "") + cbDiscovered + '</b>');
+
+    var title = feature.properties.name + (feature.properties.index > -1 && feature.properties.type !== "npc" ? " #" + (feature.properties.index + 1) : ""),
+        cbDiscovered = `<input type="checkbox" class="popup-checkbox" ${isDiscovered(feature) ? 'checked' : ''} onchange="onToggleDiscoveryItem('${id}')"/>`;
+
+    out.push('<div class="popup-header">' + '<b class="popup-title">' + title + "</b>" + cbDiscovered + "</div>");
 
     if (feature.properties.count > 1) {
         out.push('<center>' + 'x' + feature.properties.count + '</center>');
     }
     if (feature.properties.description) {
-        out.push("<br />" + feature.properties.description);
+        out.push('<div class="popup-description">' + feature.properties.description + "</div>");
     }
-    return out.join("<br />")
+    return out.join("<br/>")
 }
 
 function featureUID(feature) {
@@ -271,12 +242,33 @@ function isDiscovered(feature) {
     return discoveryItem ? discoveryItem.value : false;
 }
 
-function updateMarker(markerItem) {
+function updateMarker(markerItem, closePopup = true) {
     var marker = markerItem.marker
+
+    if (closePopup) {
+        myMap.map.closePopup();
+    }
+
     if (marker.getPopup()) {
         marker.setPopupContent(createPopupContent(markerItem.feature));
         marker.setOpacity(isDiscovered(markerItem.feature) ? MARKER_OPACITY_DISCOVERED : MARKER_OPACITY_UNDISCOVERED);
     }
+}
+
+function gotoMarker(name) {
+    var marker = _.findWhere(myMap.markers, { name: name });
+
+    if (!marker) { return; }
+
+    if (!myMap.map.hasLayer(myMap.layers[marker.layer])) {
+        if (searchLayer !== null && myMap.map.hasLayer(searchLayer)) {
+            myMap.map.removeLayer(searchLayer);
+        }
+        searchLayer = L.layerGroup([marker.marker]);
+        myMap.map.addLayer(searchLayer);
+    }
+    myMap.map.flyTo(marker.marker.getLatLng());
+    marker.marker.openPopup();
 }
 
 function saveToLocalStorage() {
