@@ -495,7 +495,7 @@ input:checked+.filter-slider .filter-icon-dark {
     display: block;
     width: 100%;
     height: auto;
-    border-radius: 5px;
+    border-radius: 4px;
     margin-top: 20px;
 }
 
@@ -520,7 +520,9 @@ input:checked+.filter-slider .filter-icon-dark {
 .popup-description {
     color: #444;
     background-color: #eee;
-    padding: 5px 5px 3px 5px;
+    border-radius: 1px;
+    text-align: center;
+    padding: 8px 8px 5px 8px;
 }
 
 .version-info {

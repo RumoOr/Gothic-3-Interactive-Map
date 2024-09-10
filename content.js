@@ -1,5 +1,6 @@
 const VERION_NAME = '1.0.0'
 
+const LAYER_INDEX_STORAGE_KEY = 'layer_index'
 const DISCOVERIES_STORAGE_KEY = 'discoveries'
 
 const MARKER_OPACITY_DISCOVERED = 0.4;
@@ -10,6 +11,7 @@ const isMobileScreen = window.innerWidth <= 600;
 var myMenu, myMap, mySearch, mySettings,
     isMenuEnabled = true,
     searchLayer = null,
+    layerIndex = 0,
     discoveries = [],
     debug = "",
     debugLine = null;
@@ -121,7 +123,8 @@ function initScript(pageIndex) {
         -9,
         -9.5,
         page,
-        myMenu.filters
+        myMenu.filters,
+        layerIndex
     );
 
     mySearch = initSearch("search", myMap.names);
@@ -143,6 +146,12 @@ function onLanguageClick(id, code) {
     } else {
         document.location.href = "index_en.html";
     }
+}
+
+function onLayerIndexChange(index) {
+    layerIndex = index;
+
+    saveLayerIndexToLocalStorage();
 }
 
 function onFilterToggleStateChange(id, checked) {
@@ -177,7 +186,7 @@ function onToggleDiscoveryItem(id) {
     if (discoveryItem) {
         discoveryItem.value = !discoveryItem.value;
 
-        saveToLocalStorage();
+        saveDiscoveriesToLocalStorage();
 
         var markerItem = myMap.markers.find(item => item.id === id)
         if (markerItem) {
@@ -271,14 +280,23 @@ function gotoMarker(name) {
     marker.marker.openPopup();
 }
 
-function saveToLocalStorage() {
+function saveLayerIndexToLocalStorage() {
+    localStorage.setItem(LAYER_INDEX_STORAGE_KEY, layerIndex.toString());
+}
+
+function saveDiscoveriesToLocalStorage() {
     localStorage.setItem(DISCOVERIES_STORAGE_KEY, JSON.stringify(discoveries));
 }
 
 function loadFromLocalStorage() {
-    var json = localStorage.getItem(DISCOVERIES_STORAGE_KEY);
-    if (json) {
-        discoveries = JSON.parse(json);
+    var jsonLayerIndex = localStorage.getItem(LAYER_INDEX_STORAGE_KEY),
+        jsonDiscoveries = localStorage.getItem(DISCOVERIES_STORAGE_KEY);
+
+    if (jsonLayerIndex) {
+        layerIndex = parseInt(jsonLayerIndex)
+    }
+    if (jsonDiscoveries) {
+        discoveries = JSON.parse(jsonDiscoveries);
     }
 }
 

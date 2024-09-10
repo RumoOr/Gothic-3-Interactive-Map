@@ -1,10 +1,14 @@
-function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filters) {
+function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filters, layerIndex) {
+    var mapNames = [
+        'resources/map_' + mapName + '_color.jpg',
+        'resources/map_' + mapName + '_sepia.jpg',
+        'resources/map_' + mapName + '_grayscale.jpg'
+    ],
+        mapColor = L.imageOverlay(mapNames[0], bounds),
+        mapSepia = L.imageOverlay(mapNames[1], bounds),
+        mapGrayscale = L.imageOverlay(mapNames[2], bounds),
+        baseMaps = {};
 
-    var mapColor = L.imageOverlay('resources/map_' + mapName + '_color.jpg', bounds),
-        mapGrayscale = L.imageOverlay('resources/map_' + mapName + '_grayscale.jpg', bounds),
-        mapSepia = L.imageOverlay('resources/map_' + mapName + '_sepia.jpg', bounds);
-
-    var baseMaps = {};
     baseMaps[localization.mapLayerColor] = mapColor;
     baseMaps[localization.mapLayerSepia] = mapSepia;
     baseMaps[localization.mapLayerGrayscale] = mapGrayscale;
@@ -46,6 +50,8 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
     L.control.layers(
         baseMaps
     ).addTo(map);
+
+    loadLayer(layerIndex);
 
     L.control.zoom({
         position: 'topright'
@@ -96,12 +102,17 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
 
     map.on('mousemove', function (e) {
         var coords = [parseInt(e.latlng.lat), parseInt(e.latlng.lng)];
-        document.getElementById('mousePositionLabel').innerHTML =
-            "" + coords[1] + " " + coords[0];
+
+        document.getElementById('mousePositionLabel').innerHTML = "" + coords[1] + " " + coords[0];
+    });
+
+    map.on('baselayerchange', function (e) {
+        var index = mapNames.indexOf(e.layer._url);
+
+        onLayerIndexChange(index);
     });
 
     map.fitBounds(bounds);
-    // map.setView(startOffset, startZoom);
 
     var markers = [], layers = {}, names = [];
 
@@ -179,6 +190,12 @@ function createVersionInfo(map) {
         return this._div;
     };
     versionInfo.addTo(map);
+}
+
+function loadLayer(index) {
+    var layerControlElement = document.getElementsByClassName('leaflet-control-layers')[0];
+
+    layerControlElement.getElementsByTagName('input')[index].click();
 }
 
 function withinBounds(rect, point) {
