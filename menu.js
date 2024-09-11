@@ -1,6 +1,8 @@
-function initMenu(id, mapName) {
-
-    var i, j, groups,
+function initMenu(id, mapName, filters) {
+    var i, j,
+        groupId,
+        itemId,
+        filterGroupStates = {},
         filterStates = {},
         container = document.getElementById(id);
 
@@ -10,42 +12,39 @@ function initMenu(id, mapName) {
                 return item.map == "all" || item.map == mapName ? "valid" : "none";
             });
         if (filterCount.valid > 0) {
-            addFilterGroup(container, jsonMenu[i], mapName);
-
             for (j = 0; j < jsonMenu[i].items.length; j += 1) {
-                filterStates[jsonMenu[i].items[j].id] = jsonMenu[i].items[j].checked;
+                groupId = jsonMenu[i].icon;
+                itemId = jsonMenu[i].items[j].id;
+
+                filterStates[itemId] = isFilterItemChecked(groupId, itemId);
             }
+            filterGroupStates[groupId] = isFilterGroupChecked(groupId);
+
+            addFilterGroup(container, jsonMenu[i], mapName, filterGroupStates, filterStates);
         }
     }
-
-    groups = document.getElementsByClassName("accordion");
-
-    for (i = 0; i < groups.length; i++) {
-        groups[i].addEventListener("click", function () {
-            this.classList.toggle("active");
-            var panel = this.nextElementSibling;
-            if (panel.style.maxHeight) {
-                panel.style.maxHeight = null;
-            } else {
-                panel.style.maxHeight = panel.scrollHeight + "px";
-            }
-        });
-        //groups[i].click();
-    }
-    groups[0].click();
 
     return {
         "filters": filterStates
     };
 }
 
-function addFilterGroup(parent, jsonFilter, mapName) {
-
-    var i, row;
+function addFilterGroup(parent, jsonFilter, mapName, filterGroupStates, filterStates) {
+    var i,
+        groupId = jsonFilter.icon,
+        jsonItem,
+        row;
 
     var button = document.createElement("button");
     button.className = "accordion";
     button.innerHTML = jsonFilter.title;
+    button.addEventListener("click", function () {
+        toggleFilterGroup(button);
+
+        filterGroupStates[groupId] = !filterGroupStates[groupId]
+
+        onFilterGroupCheckedChange(jsonFilter, filterGroupStates[groupId]);
+    });
     parent.appendChild(button);
 
     var icon = document.createElement("img");
@@ -57,16 +56,24 @@ function addFilterGroup(parent, jsonFilter, mapName) {
     div.className = "panel";
     parent.appendChild(div);
 
-    var validFilters = _.filter(jsonFilter.items, 
+    var validFilters = _.filter(jsonFilter.items,
         function (item) {
             return item.map == "all" || item.map == mapName;
-        });
+        }
+    );
 
     for (i = 0; i < validFilters.length; i += 1) {
+        jsonItem = validFilters[i];
+
         if (i % 2 == 0) {
             row = addFilterRow(div);
         }
-        addFilterItem(row, validFilters[i], jsonFilter);
+
+        addFilterItem(row, jsonItem, jsonFilter, filterStates[jsonItem.id]);
+    }
+
+    if (filterGroupStates[groupId]) {
+        toggleFilterGroup(button);
     }
 }
 
@@ -82,7 +89,7 @@ function addFilterRow(parent) {
     return row;
 }
 
-function addFilterItem(parent, jsonItem, jsonFilter) {
+function addFilterItem(parent, jsonItem, jsonFilter, checked) {
     var td = document.createElement("td");
     parent.appendChild(td);
 
@@ -92,10 +99,11 @@ function addFilterItem(parent, jsonItem, jsonFilter) {
 
     var checkbox = document.createElement("input");
     checkbox.type = "checkbox";
+    checkbox.className = "filter-checkbox";
     checkbox.id = jsonItem.id;
-    checkbox.checked = jsonItem.checked;
+    checkbox.checked = checked;
     checkbox.addEventListener("click", function () {
-        onFilterToggleStateChange(jsonItem.id, checkbox.checked);
+        onFilterItemCheckedChange(jsonItem, jsonFilter, checkbox.checked);
     });
     label.appendChild(checkbox);
 
@@ -117,4 +125,15 @@ function addFilterItem(parent, jsonItem, jsonFilter) {
     var text = document.createElement("span");
     text.innerHTML = jsonItem.name;
     slider.appendChild(text);
+}
+
+function toggleFilterGroup(button) {
+    button.classList.toggle("active");
+
+    var panel = button.nextElementSibling;
+    if (panel.style.maxHeight) {
+        panel.style.maxHeight = null;
+    } else {
+        panel.style.maxHeight = panel.scrollHeight + "px";
+    }
 }

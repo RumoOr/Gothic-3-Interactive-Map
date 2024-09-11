@@ -1,10 +1,14 @@
-function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filters) {
+function initMap(id, bounds, minimumZoom, mapName, filters, layerIndex) {
+    var mapNames = [
+        'resources/map_' + mapName + '_color.jpg',
+        'resources/map_' + mapName + '_sepia.jpg',
+        'resources/map_' + mapName + '_grayscale.jpg'
+    ],
+        mapColor = L.imageOverlay(mapNames[0], bounds),
+        mapSepia = L.imageOverlay(mapNames[1], bounds),
+        mapGrayscale = L.imageOverlay(mapNames[2], bounds),
+        baseMaps = {};
 
-    var mapColor = L.imageOverlay('resources/map_' + mapName + '_color.jpg', bounds),
-        mapGrayscale = L.imageOverlay('resources/map_' + mapName + '_grayscale.jpg', bounds),
-        mapSepia = L.imageOverlay('resources/map_' + mapName + '_sepia.jpg', bounds);
-
-    var baseMaps = {};
     baseMaps[localization.mapLayerColor] = mapColor;
     baseMaps[localization.mapLayerSepia] = mapSepia;
     baseMaps[localization.mapLayerGrayscale] = mapGrayscale;
@@ -33,6 +37,7 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
     };
 
     var map = L.map(id, {
+        zoomControl: false,
         crs: L.CRS.Simple,
         maxZoom: -4.5,
         minZoom: minimumZoom,
@@ -42,7 +47,13 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
 
     mapColor.addTo(map);
 
-    L.control.layers(baseMaps).addTo(map);
+    L.control.layers(
+        baseMaps
+    ).addTo(map);
+
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(map);
 
     L.control.custom({
         content: '<div id="mousePositionLabel">' +
@@ -89,47 +100,19 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
 
     map.on('mousemove', function (e) {
         var coords = [parseInt(e.latlng.lat), parseInt(e.latlng.lng)];
-        document.getElementById('mousePositionLabel').innerHTML =
-            "" + coords[1] + " " + coords[0];
-        /*   
-        debug =  "" + coords[1] + "," + coords[0];
-        
-        if (debugLine == null) {
-        	debugLine = L.polygon([e.latlng]).addTo(map);
-        } else {
-        	debugLine.addLatLng(e.latlng);
-        }
-        */
+
+        document.getElementById('mousePositionLabel').innerHTML = "" + coords[1] + " " + coords[0];
+    });
+
+    map.on('baselayerchange', function (e) {
+        var index = mapNames.indexOf(e.layer._url);
+
+        onLayerIndexChange(index);
     });
 
     map.fitBounds(bounds);
-    // map.setView(startOffset, startZoom);
 
-    function createPopup(feature, layer) {
-        if (feature.properties.label == true) {
-            return;
-        }
-        var popup = L.popup({
-            minWidth: feature.properties.screen ? 512 : 50,
-            maxWidth: 512,
-            maxHeight: 1024
-        });
-        var out = [];
-        if (feature.properties.screen) {
-            out.push('<img src="./resources/screens/' + feature.properties.screen + '"/>' + "<br />");
-        }
-        out.push('<b>' + feature.properties.name + (feature.properties.index > -1 && feature.properties.type !== "npc" ? " #" + (feature.properties.index + 1) : "") + '</b>');
-        if (feature.properties.count > 1) {
-            out.push('<center>' + 'x' + feature.properties.count + '</center>');
-        }
-
-        if (feature.properties.description) {
-            out.push("<br />" + feature.properties.description);
-        }
-        layer.bindPopup(popup.setContent(out.join("<br />")));
-    }
-
-    var markers = [], layers = {}, names = [];
+    var markers = [], layers = {};
 
     var keys = _.keys(_.countBy(jsonData,
         function (element) {
@@ -139,20 +122,23 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
     keys.forEach(element => {
         layers[element] = L.geoJSON(jsonData, {
             pointToLayer: function (feature, latlng) {
+                var id = featureUID(feature);
                 var typeId = feature.properties.type + (feature.properties.tag ? "_" + feature.properties.tag : "");
-                var name = feature.properties.name + (feature.properties.index > -1 && feature.properties.type !== "npc" ? " #" + (feature.properties.index + 1) : "");
+                var name = featureTitle(feature);
                 var marker = L.marker(latlng, {
                     icon: feature.properties.label == true ?
                         new FeatureLabel(feature.properties.name) :
                         new FeatureIcon({ iconUrl: 'resources/icons/ic_marker_' + typeId + '.png' })
                 });
+                marker.setOpacity(isDiscovered(feature) ? MARKER_OPACITY_DISCOVERED : MARKER_OPACITY_UNDISCOVERED);
                 markers.push(
                     {
+                        "id": id,
                         "marker": marker,
                         "layer": typeId,
-                        "name": name
+                        "name": name,
+                        "feature": feature
                     });
-                names.push(name);
                 return marker;
             },
             onEachFeature: createPopup,
@@ -168,14 +154,49 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
         }
     });
 
-    function withinBounds(rect, point) {
-        return point[0] >= rect[0][1] && point[0] <= rect[1][1] && point[1] >= rect[0][0] && point[1] <= rect[1][0];
-    }
+    createVersionInfo(map);
+
+    loadLayer(layerIndex);
 
     return {
         "map": map,
         "markers": markers,
-        "layers": layers,
-        "names": names
+        "layers": layers
     };
+}
+
+function createPopup(feature, layer) {
+    if (feature.properties.label == true) {
+        return;
+    }
+
+    var maxSize = 512,
+        maxWidthScreen = Math.min(window.innerWidth - 50, maxSize),
+        popup = L.popup({
+            minWidth: feature.properties.screen ? maxWidthScreen : 50,
+            maxWidth: maxWidthScreen,
+            maxHeight: maxSize
+        });
+
+    layer.bindPopup(popup.setContent(createPopupContent(feature)));
+}
+
+function createVersionInfo(map) {
+    var versionInfo = L.control({ position: 'bottomright' });
+    versionInfo.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'version-info');
+        this._div.innerHTML = `v${VERION_NAME}`;
+        return this._div;
+    };
+    versionInfo.addTo(map);
+}
+
+function loadLayer(index) {
+    var layerControlElement = document.getElementsByClassName('leaflet-control-layers')[0];
+
+    layerControlElement.getElementsByTagName('input')[index].click();
+}
+
+function withinBounds(rect, point) {
+    return point[0] >= rect[0][1] && point[0] <= rect[1][1] && point[1] >= rect[0][0] && point[1] <= rect[1][0];
 }

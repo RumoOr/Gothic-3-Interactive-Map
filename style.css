@@ -1,6 +1,86 @@
 /* Eric Meyer's CSS Reset */
 
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
     margin: 0;
     padding: 0;
     border: 0;
@@ -27,7 +107,17 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 
 /* HTML5 display-role reset for older browsers */
 
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
     display: block;
 }
 
@@ -35,15 +125,20 @@ body {
     line-height: 1;
 }
 
-ol, ul {
+ol,
+ul {
     list-style: none;
 }
 
-blockquote, q {
+blockquote,
+q {
     quotes: none;
 }
 
-blockquote:before, blockquote:after, q:before, q:after {
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
     content: '';
     content: none;
 }
@@ -55,7 +150,8 @@ table {
 
 /* End of Eric Meyer's CSS Reset */
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     background-color: #333;
@@ -87,7 +183,6 @@ ul.topnav li {
     height: 50px;
     text-align: center;
     vertical-align: middle;
-    /* background: #ff00ff; */
 }
 
 ul.topnav li a {
@@ -105,6 +200,7 @@ ul.topnav li a:hover:not(.active) {
     color: #eee;
     background-color: #111;
     border-bottom: 3px solid #111;
+    transition: 0.25s;
 }
 
 ul.topnav li a.active {
@@ -115,15 +211,10 @@ ul.topnav li a.active {
 
 ul.topnav div.right {
     float: right;
-}
-
-@media screen and (max-width: 600px) {
-    ul.topnav li {
-        overflow-x: auto;
-    }
-    ul.topnav div.right {
-        /* float: left; */
-    }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin: 5px;
 }
 
 .topnav-menu {
@@ -135,7 +226,9 @@ ul.topnav div.right {
     padding: 0px 17px;
 }
 
-.topnav-menu-bar1, .topnav-menu-bar2, .topnav-menu-bar3 {
+.topnav-menu-bar1,
+.topnav-menu-bar2,
+.topnav-menu-bar3 {
     width: 20px;
     height: 2px;
     background-color: #eee;
@@ -143,23 +236,26 @@ ul.topnav div.right {
     transition: 0.4s;
 }
 
-.topnav-flag, .topnav-flag-last {
+.topnav-flag,
+.topnav-flag-last {
     display: table-cell;
     cursor: pointer;
     width: auto;
-    height: 20px;
+    height: 17px;
     vertical-align: middle;
-    margin: 15px 3px; 
-    /* border: 1px outset #aaa; */
     box-shadow: 1px 1px 1px #000000aa;
+    opacity: 0.5;
 }
 
-.topnav-flag-last {
-    margin: 15px 10px 15px 3px;
+.topnav-flag.active,
+.topnav-flag-last.active {
+    opacity: 1;
 }
 
-.topnav-flag.active, .topnav-flag-last.active {
-    /* border: 1px outset #eee; */
+@media screen and (max-width: 600px) {
+    ul.topnav li {
+        overflow-x: auto;
+    }
 }
 
 /* Rotate first bar */
@@ -189,7 +285,8 @@ ul.topnav div.right {
     float: left;
     position: absolute;
     height: 100%;
-    width: 370px;
+    width: 350px;
+    left: 0px;
     box-shadow: 0px 0px 5px #aaa;
     overflow: auto;
     z-index: 1;
@@ -217,7 +314,6 @@ ul.topnav div.right {
     border: 1px solid #ddd;
     background-color: #fff;
     padding: 10px;
-    /* font-size: 16px; */
 }
 
 .autocomplete input[type=search] {
@@ -253,6 +349,12 @@ ul.topnav div.right {
 .autocomplete-active {
     background-color: DodgerBlue !important;
     color: #ffffff;
+}
+
+.autocomplete-checkbox {
+    position: relative;
+    top: 1px;
+    margin-left: 10px;
 }
 
 .accordion {
@@ -307,6 +409,10 @@ ul.topnav div.right {
     height: 50px;
 }
 
+.filter-checkbox {
+    display: none;
+}
+
 .filter-slider {
     position: absolute;
     cursor: pointer;
@@ -315,23 +421,26 @@ ul.topnav div.right {
     right: 0;
     bottom: 0;
     overflow: hidden;
+    padding: 2px;
 }
 
 .filter-icon-light {
     display: none;
     float: left;
     width: auto;
-    height: 38px;
+    height: 34px;
     padding: 6px;
     background-color: #4CAF50;
+    border-radius: 4px;
 }
 
 .filter-icon-dark {
     float: left;
     width: auto;
-    height: 38px;
+    height: 34px;
     padding: 6px;
     background-color: #fff;
+    border-radius: 4px;
 }
 
 input:checked+.filter-slider .filter-icon-light {
@@ -347,34 +456,51 @@ input:checked+.filter-slider .filter-icon-dark {
     transform: translate(0%, -50%);
     top: 50%;
     left: 50;
-    width: 100%;
+    width: 60%;
     padding: 0 0 0 10px;
     color: #555;
     font-size: 12px;
+}
+
+.settings-entry {
+    display: grid;
+    width: auto;
+    padding: 7px;
+}
+
+.settings-entry button {
+    border: 1px solid #ddd;
+    color: #444;
+    background-color: #fff;
+    padding: 10px;
+}
+
+.settings-entry button:hover {
+    background-color: #00000080;
+    color: #fff;
+    transition: 0.25s;
 }
 
 /* Map
 -----------------------------------------------------------------------------*/
 
 #map {
-    display: block;
     position: absolute;
     height: auto;
-    bottom: 0;
-    top: 0;
+    top: 50px;
     left: 0;
     right: 0;
-    margin-top: 50px;
-    margin-left: 370px;
+    bottom: 0;
     z-index: 0;
     transition: 0.4s;
 }
 
 .feature-label {
-    /* ... */
+    pointer-events: none;
 }
 
 .feature-label span {
+    pointer-events: none;
     position: fixed;
     margin: 0 auto;
     text-align: center;
@@ -387,4 +513,47 @@ input:checked+.filter-slider .filter-icon-dark {
     height: auto;
     transform: translate(-50%, -25%);
     text-shadow: -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000, 1px 1px 1px #000;
+}
+
+.popup-screenshot {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.popup-header {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-title {
+    line-height: 1;
+    text-align: center;
+}
+
+.popup-checkbox {
+    position: relative;
+    top: -1px;
+    margin-left: 10px;
+}
+
+.popup-description {
+    color: #444;
+    background-color: #eee;
+    border-radius: 1px;
+    text-align: center;
+    padding: 8px 8px 5px 8px;
+}
+
+.version-info {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0 0;
+    font-size: 11px;
+    color: #999;
 }

@@ -2,13 +2,15 @@ var localization = {
     "websiteTitle": "Gothic 3 Interactive Map",
     "sidebarSearch": "Search",
     "sidebarMenu": "Markers",
+    "sidebarSettings": "Settings",
     "tabWorldmap": "Worldmap",
     "tabAlShedim": "Al Shedim",
     "tabImprint": "Imprint",
     "mapLayerColor": "Color",
     "mapLayerSepia": "Sepia",
     "mapLayerGrayscale": "Grayscale",
-    "searchHint": "Name / Location / Monster ..."
+    "searchHint": "Name / Location / Monster ...",
+    "settingsResetMap": "Reset Map"
 }
 
 var jsonMenu = [

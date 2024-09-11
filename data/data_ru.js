@@ -2,13 +2,15 @@
     "websiteTitle": "Готика 3: Интерактивная карта",
     "sidebarSearch": "Поиск",
     "sidebarMenu": "Маркеры",
+    "sidebarSettings": "Настройки",
     "tabWorldmap": "Карта мира",
     "tabAlShedim": "Аль-Шедим",
     "tabImprint": "Метка",
     "mapLayerColor": "Цвет",
     "mapLayerSepia": "Сепия",
     "mapLayerGrayscale": "Градация серого",
-    "searchHint": "Название / Место / Монстр ..."
+    "searchHint": "Название / Место / Монстр ...",
+    "settingsResetMap": "Сбросить карту"
 }
 
 var jsonMenu = [
