@@ -1,4 +1,4 @@
-const VERION_NAME = '1.0.0'
+const VERION_NAME = '1.1.0'
 
 const LAYER_INDEX_STORAGE_KEY = 'layer_index'
 const FILTERS_STORAGE_KEY = 'filters'
