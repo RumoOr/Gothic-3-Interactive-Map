@@ -137,7 +137,7 @@ function initScript(pageIndex, code) {
 
     mySearch = initSearch(
         "search",
-        myMap.names
+        myMap.markers
     );
 
     mySettings = initSettings("settings");
@@ -241,10 +241,9 @@ function createPopupContent(feature) {
         out.push('<img class="popup-screenshot" src="./resources/screens/' + feature.properties.screen + '"/>');
     }
 
-    var title = feature.properties.name + (feature.properties.index > -1 && feature.properties.type !== "npc" ? " #" + (feature.properties.index + 1) : ""),
-        cbDiscovered = `<input type="checkbox" class="popup-checkbox" ${isDiscovered(feature) ? 'checked' : ''} onchange="onToggleDiscoveryItem('${id}')"/>`;
+    var cb = `<input type="checkbox" class="popup-checkbox" ${isDiscovered(feature) ? 'checked' : ''} onchange="onToggleDiscoveryItem('${id}')"/>`;
 
-    out.push('<div class="popup-header">' + '<b class="popup-title">' + title + "</b>" + cbDiscovered + "</div>");
+    out.push('<div class="popup-header">' + '<b class="popup-title">' + featureTitle(feature) + "</b>" + cb + "</div>");
 
     if (feature.properties.count > 1) {
         out.push('<center>' + 'x' + feature.properties.count + '</center>');
@@ -257,6 +256,10 @@ function createPopupContent(feature) {
 
 function featureUID(feature) {
     return feature.geometry.coordinates[0] + "_" + feature.geometry.coordinates[1]
+}
+
+function featureTitle(feature) {
+    return feature.properties.name + (feature.properties.index > -1 && feature.properties.type !== "npc" ? " #" + (feature.properties.index + 1) : "")
 }
 
 function initFilters() {

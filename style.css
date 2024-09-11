@@ -351,6 +351,12 @@ ul.topnav div.right {
     color: #ffffff;
 }
 
+.autocomplete-checkbox {
+    position: relative;
+    top: 1px;
+    margin-left: 10px;
+}
+
 .accordion {
     background-color: #eee;
     color: #444;

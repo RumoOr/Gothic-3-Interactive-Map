@@ -112,7 +112,7 @@ function initMap(id, bounds, minimumZoom, mapName, filters, layerIndex) {
 
     map.fitBounds(bounds);
 
-    var markers = [], layers = {}, names = [];
+    var markers = [], layers = {};
 
     var keys = _.keys(_.countBy(jsonData,
         function (element) {
@@ -122,8 +122,9 @@ function initMap(id, bounds, minimumZoom, mapName, filters, layerIndex) {
     keys.forEach(element => {
         layers[element] = L.geoJSON(jsonData, {
             pointToLayer: function (feature, latlng) {
+                var id = featureUID(feature);
                 var typeId = feature.properties.type + (feature.properties.tag ? "_" + feature.properties.tag : "");
-                var name = feature.properties.name + (feature.properties.index > -1 && feature.properties.type !== "npc" ? " #" + (feature.properties.index + 1) : "");
+                var name = featureTitle(feature);
                 var marker = L.marker(latlng, {
                     icon: feature.properties.label == true ?
                         new FeatureLabel(feature.properties.name) :
@@ -132,13 +133,12 @@ function initMap(id, bounds, minimumZoom, mapName, filters, layerIndex) {
                 marker.setOpacity(isDiscovered(feature) ? MARKER_OPACITY_DISCOVERED : MARKER_OPACITY_UNDISCOVERED);
                 markers.push(
                     {
-                        "id": featureUID(feature),
+                        "id": id,
                         "marker": marker,
                         "layer": typeId,
                         "name": name,
                         "feature": feature
                     });
-                names.push(name);
                 return marker;
             },
             onEachFeature: createPopup,
@@ -161,8 +161,7 @@ function initMap(id, bounds, minimumZoom, mapName, filters, layerIndex) {
     return {
         "map": map,
         "markers": markers,
-        "layers": layers,
-        "names": names
+        "layers": layers
     };
 }
 
