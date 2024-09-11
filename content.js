@@ -60,9 +60,9 @@ function createHTML(code, pageIndex) {
                     <div class="right">
                         <img id="language-flag-de" class="topnav-flag" alt="de" src="./resources/flags/de.svg"
                             onclick='onLanguageClick(this, "de")'>
-                        <img id="language-flag-en" class="topnav-flag" alt="en" src="./resources/flags/gb.svg"
+                        <img id="language-flag-en" class="topnav-flag" alt="en" src="./resources/flags/en.svg"
                             onclick='onLanguageClick(this, "en")'>
-                        <img id="language-flag-en" class="topnav-flag" alt="pl" src="./resources/flags/pl.svg"
+                        <img id="language-flag-pl" class="topnav-flag" alt="pl" src="./resources/flags/pl.svg"
                             onclick='onLanguageClick(this, "pl")'>
                         <img id="language-flag-ru" class="topnav-flag-last" alt="ru" src="./resources/flags/ru.svg"
                             onclick='onLanguageClick(this, "ru")'>
@@ -91,7 +91,7 @@ function createHTML(code, pageIndex) {
             </aside>
             
             <script>
-                initScript(${pageIndex});
+                initScript(${pageIndex}, "${code}");
             </script>
 
             </body>
@@ -100,8 +100,8 @@ function createHTML(code, pageIndex) {
     `;
 }
 
-function initScript(pageIndex) {
-    document.getElementById("language-flag-de").classList.toggle("active");
+function initScript(pageIndex, code) {
+    document.getElementById(`language-flag-${code}`).classList.toggle("active");
 
     document.title = localization.websiteTitle;
     document.getElementById("header-search").innerHTML = localization.sidebarSearch;
@@ -117,6 +117,8 @@ function initScript(pageIndex) {
     loadFromLocalStorage();
 
     let page = pageIndex == 0 ? "world" : "alshedim"
+    let bounds = pageIndex == 0 ? [[-214000, -242500], [199000, 157000]] : [[-178000, -62000], [-138000, -22000]]
+    let minimumZoom = pageIndex == 0 ? -9.5 : -6
 
     myMenu = initMenu(
         "menu",
@@ -126,10 +128,8 @@ function initScript(pageIndex) {
 
     myMap = initMap(
         "map",
-        [[-214000, -242500], [199000, 157000]],
-        [0, 0],
-        -9,
-        -9.5,
+        bounds,
+        minimumZoom,
         page,
         myMenu.filters,
         layerIndex

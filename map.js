@@ -1,4 +1,4 @@
-function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filters, layerIndex) {
+function initMap(id, bounds, minimumZoom, mapName, filters, layerIndex) {
     var mapNames = [
         'resources/map_' + mapName + '_color.jpg',
         'resources/map_' + mapName + '_sepia.jpg',
@@ -50,8 +50,6 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
     L.control.layers(
         baseMaps
     ).addTo(map);
-
-    loadLayer(layerIndex);
 
     L.control.zoom({
         position: 'topright'
@@ -157,6 +155,8 @@ function initMap(id, bounds, startOffset, startZoom, minimumZoom, mapName, filte
     });
 
     createVersionInfo(map);
+
+    loadLayer(layerIndex);
 
     return {
         "map": map,

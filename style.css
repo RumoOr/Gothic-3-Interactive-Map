@@ -244,6 +244,12 @@ ul.topnav div.right {
     height: 17px;
     vertical-align: middle;
     box-shadow: 1px 1px 1px #000000aa;
+    opacity: 0.5;
+}
+
+.topnav-flag.active,
+.topnav-flag-last.active {
+    opacity: 1;
 }
 
 @media screen and (max-width: 600px) {
@@ -483,7 +489,12 @@ input:checked+.filter-slider .filter-icon-dark {
     transition: 0.4s;
 }
 
+.feature-label {
+    pointer-events: none;
+}
+
 .feature-label span {
+    pointer-events: none;
     position: fixed;
     margin: 0 auto;
     text-align: center;
