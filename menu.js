@@ -35,7 +35,7 @@ function addFilterGroup(parent, jsonFilter, mapName, filterGroupStates, filterSt
         jsonItem,
         row;
 
-    var button = document.createElement("button");
+    var button = document.createElement("h3");
     button.className = "accordion";
     button.innerHTML = jsonFilter.title;
     button.addEventListener("click", function () {

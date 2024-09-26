@@ -5,6 +5,7 @@ var localization = {
     "sidebarSettings": "Einstellungen",
     "tabWorldmap": "Weltkarte",
     "tabAlShedim": "Al Shedim",
+    "tabChecklist": "Checkliste",
     "tabImprint": "Impressum",
     "mapLayerColor": "Farbe",
     "mapLayerSepia": "Sepia",
@@ -16,7 +17,7 @@ var localization = {
 var jsonMenu = [
     {
         "title": "Allgemein",
-        "color": "#555555",
+        "color": "#999",
         "icon": "ic_group_general",
         "items": [
             {
