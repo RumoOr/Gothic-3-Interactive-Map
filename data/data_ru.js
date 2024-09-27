@@ -5,6 +5,7 @@
     "sidebarSettings": "Настройки",
     "tabWorldmap": "Карта мира",
     "tabAlShedim": "Аль-Шедим",
+    "tabChecklist": "Список",
     "tabImprint": "Метка",
     "mapLayerColor": "Цвет",
     "mapLayerSepia": "Сепия",
@@ -16,7 +17,7 @@
 var jsonMenu = [
     {
         "title": "Основные",
-        "color": "#555555",
+        "color": "#999",
         "icon": "ic_group_general",
         "items": [
             {
